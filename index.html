@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<style>
+			table,
+			th,
+			td {
+				border: 1px solid black;
+				border-collapse: collapse;
+				padding: 5px;
+			}
+		</style>
+	</head>
+
+	<body>
+		<form action="/" method="post">
+			<input type="hidden" name="form" value="days">
+
+			<table>
+				<thead>
+					<tr>
+						<th>date</th>
+						<th>hours</th>
+						<th>pay</th>
+						<th>paid</th>
+						<th>owed</th>
+						<th>del</th>
+					</tr>
+				</thead>
+				<tbody>
+					{{range $i, $d := .Days}}
+					<tr>
+						<td><input type="date" name="date_{{$i}}" value="{{$d.Date}}"></td>
+						<td><input type="number" name="hours_{{$i}}" min="0" max="24" step="0.1" value="{{printf "%.1f" $d.Hours}}"></td>
+						<td><span>$</span>{{printf "%.2f" $d.Pay}}</td>
+						<td><input type="checkbox" name="paid_{{$i}}" {{if $d.Paid}}checked{{end}}></td>
+						<td><span>$</span>{{printf "%.2f" $d.Owed}}</td>
+						<td><input type="checkbox" name="delete_{{$i}}"></td>
+					</tr>
+					{{end}}
+
+					<tr>
+						<td></td>
+						<td>{{printf "%.1f" .DaysTotal.Hours}}</td>
+						<td><span>$</span>{{printf "%.2f" .DaysTotal.Pay}}</td>
+						<td></td>
+						<td><span>$</span>{{printf "%.2f" .DaysTotal.Owed}}</td>
+						<td></td>
+					</tr>
+				</tbody>
+			</table>
+
+			<button type="submit" name="action" value="save">save changes</button>
+			<button type="submit" name="action" value="add">add row</button>
+		</form>
+
+		<hr>
+
+		<form action="/" method="post">
+			<input type="hidden" name="form" value="rates">
+
+			<table>
+				<thead>
+					<tr>
+						<th>date</th>
+						<th>rate ($/hr)</th>
+						<th>del</th>
+					</tr>
+				</thead>
+				<tbody>
+					{{range $i, $r := .Rates}}
+					<tr>
+						<td><input type="date" name="date_{{$i}}" value="{{$r.Date}}"></td>
+						<td><span>$</span><input type="number" name="rate_{{$i}}" min="0" step="0.01" value="{{printf "%.2f" $r.Rate}}"></td>
+						<td><input type="checkbox" name="delete_{{$i}}"></td>
+					</tr>
+					{{end}}
+				</tbody>
+			</table>
+
+			<button type="submit" name="action" value="save">save changes</button>
+			<button type="submit" name="action" value="add">add row</button>
+		</form>
+	</body>
+</html>
